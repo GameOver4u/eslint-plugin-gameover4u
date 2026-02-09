@@ -1,0 +1,25 @@
+{
+  "name": "eslint-plugin-gameover4u",
+  "version": "0.1.0",
+  "description": "Custom ESLint rules with stricter JSX and prop ordering semantics",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "test": "echo \"No tests yet\""
+  },
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "react",
+    "typescript"
+  ],
+  "author": "GameOver4u",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@types/eslint": "^9.6.1",
+    "eslint": "^10.0.0",
+    "typescript": "^5.9.3"
+  }
+}
