@@ -1,5 +1,6 @@
 import type { TSESTree } from "@typescript-eslint/utils";
 import { createRule } from "../utils/createRule";
+import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
 type Options = [string[]?];
 type MessageIds = "forbidden" | "invalidOptions";
@@ -60,9 +61,9 @@ export const noConsoleRule = createRule<MessageIds, Options>({
         const prop = node.property;
 
         if (
-          obj.type === "Identifier" &&
+          obj.type === AST_NODE_TYPES.Identifier &&
           obj.name === "console" &&
-          prop.type === "Identifier" &&
+          prop.type === AST_NODE_TYPES.Identifier &&
           !allowedMethods.includes(prop.name)
         ) {
           context.report({
