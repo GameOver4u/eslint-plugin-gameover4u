@@ -1,6 +1,5 @@
-import type { TSESTree } from "@typescript-eslint/utils";
+import { AST_NODE_TYPES, type TSESTree } from "@typescript-eslint/utils";
 import { createRule } from "../utils/createRule";
-import { AST_NODE_TYPES } from "@typescript-eslint/utils";
 
 type Options = [string[]?];
 type MessageIds = "forbidden" | "invalidOptions";
@@ -60,17 +59,30 @@ export const noConsoleRule = createRule<MessageIds, Options>({
         const obj = node.object;
         const prop = node.property;
 
-        if (
-          obj.type === AST_NODE_TYPES.Identifier &&
-          obj.name === "console" &&
-          prop.type === AST_NODE_TYPES.Identifier &&
-          !allowedMethods.includes(prop.name)
-        ) {
-          context.report({
-            node,
-            messageId: "forbidden",
-            data: { method: prop.name, allowed: allowedStr },
-          });
+        if (obj.type === AST_NODE_TYPES.Identifier && obj.name === "console") {
+          let methodName: string | null = null;
+
+          // console.warn
+          if (!node.computed && prop.type === AST_NODE_TYPES.Identifier) {
+            methodName = prop.name;
+          }
+
+          // console["warn"]
+          if (
+            node.computed &&
+            prop.type === AST_NODE_TYPES.Literal &&
+            typeof prop.value === "string"
+          ) {
+            methodName = prop.value;
+          }
+
+          if (methodName && !allowedMethods.includes(methodName)) {
+            context.report({
+              node,
+              messageId: "forbidden",
+              data: { method: methodName, allowed: allowedStr },
+            });
+          }
         }
       },
     };

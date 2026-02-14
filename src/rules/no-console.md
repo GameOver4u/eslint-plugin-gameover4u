@@ -17,3 +17,13 @@ console.warn("warn");
 // ✅ allowed
 console.error("error");
 ```
+
+## Limitations
+
+This rule only checks static member access:
+
+- ✅ `console.log()`
+- ✅ `console["log"]()`
+- ❌ `console[variable]()` (not statically analyzable)
+
+Dynamic property access using variables is intentionally ignored, as it cannot be reliably determined at lint time.

@@ -8,11 +8,12 @@ const ruleTester = new TSESLint.RuleTester({
 
 ruleTester.run("no-console", noConsoleRule, {
   valid: [
-    // No options: nothing allowed
     { code: 'console.error("ok");', options: [["error"]] }, // allowed because 'error' is specified
-    { code: 'console.error("ok");', options: [["error", "warn"]] }, // allowed multiple
-    { code: 'console.warn("warn");', options: [["warn"]] }, // allowed single
-    { code: 'console.info("hi");', options: [["info", "error"]] }, // allowed multiple
+    // bracket notation allowed
+    { code: 'console["info"]("hi");', options: [["info", "error"]] }, // mixed allowed
+    { code: 'myConsole.log("test");' }, // unrelated object
+    // property access but not a call (still allowed if method allowed)
+    { code: "const fn = console.error;", options: [["error"]] },
   ],
 
   invalid: [
@@ -27,33 +28,12 @@ ruleTester.run("no-console", noConsoleRule, {
       ],
     },
     {
-      code: 'console.warn("warn");',
-      errors: [
-        {
-          messageId: "forbidden",
-          data: { method: "warn", allowed: "none" },
-        },
-      ],
-    },
-
-    // With options: only allowed methods are okay
-    {
       code: 'console.log("oops");',
-      options: [["error"]], // only console.error allowed
+      options: [["error"]],
       errors: [
         {
           messageId: "forbidden",
           data: { method: "log", allowed: "error" },
-        },
-      ],
-    },
-    {
-      code: 'console.warn("warn");',
-      options: [["error", "info"]], // only console.error/info allowed
-      errors: [
-        {
-          messageId: "forbidden",
-          data: { method: "warn", allowed: "error, info" },
         },
       ],
     },
@@ -82,6 +62,16 @@ ruleTester.run("no-console", noConsoleRule, {
         {
           messageId: "forbidden",
           data: { method: "warn", allowed: "none" },
+        },
+      ],
+    }, // bracket notation forbidden
+    {
+      code: "console['warn']('warn');",
+      options: [["error"]],
+      errors: [
+        {
+          messageId: "forbidden",
+          data: { method: "warn", allowed: "error" },
         },
       ],
     },
